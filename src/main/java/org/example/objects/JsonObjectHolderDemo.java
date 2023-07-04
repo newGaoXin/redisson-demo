@@ -4,9 +4,19 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.example.utils.RedissonUtil;
 import org.redisson.Redisson;
 import org.redisson.api.RJsonBucket;
+import org.redisson.api.RSearch;
 import org.redisson.api.RedissonClient;
+import org.redisson.api.search.index.FieldIndex;
+import org.redisson.api.search.index.IndexOptions;
+import org.redisson.api.search.index.IndexType;
+import org.redisson.api.search.query.Document;
+import org.redisson.api.search.query.QueryOptions;
+import org.redisson.api.search.query.ReturnAttribute;
+import org.redisson.api.search.query.SearchResult;
+import org.redisson.client.codec.StringCodec;
 import org.redisson.codec.JacksonCodec;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -40,6 +50,24 @@ public class JsonObjectHolderDemo {
         bucket.getAndSet(new Human("田七"));
         human = bucket.get();
         System.out.println("human = " + human);
+
+        RSearch s = redissonClient.getSearch(StringCodec.INSTANCE);
+
+        // 创建索引
+        s.createIndex("idx", IndexOptions.defaults()
+                        .on(IndexType.JSON)
+                        .prefix(Arrays.asList(JsonObjectHolderDemo.class.getSimpleName())),
+                FieldIndex.text("$..name").as("name"));
+
+        System.out.println("------- 搜索 华丽的分割线 -------");
+        SearchResult r = s.search("idx", "*", QueryOptions.defaults()
+                .returnAttributes(new ReturnAttribute("name")));
+        for (Document document : r.getDocuments()) {
+            System.out.println(document.getId());
+            System.out.println(document.getAttributes());
+            System.out.println(document.getScore());
+            System.out.println(document.getPayload());
+        }
 
 
         System.exit(0);

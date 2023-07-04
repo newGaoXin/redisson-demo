@@ -3,6 +3,7 @@ package org.example.objects;
 import org.example.utils.RedissonUtil;
 import org.redisson.Redisson;
 import org.redisson.api.RBucket;
+import org.redisson.api.RDelayedQueue;
 
 /**
  * @author newgaoxin
@@ -21,9 +22,13 @@ public class ObjectHolderDemo {
         Human obj = bucket.get();
         System.out.println(obj);
 
-//        bucket.trySet(new AnyObject(3));
-//        bucket.compareAndSet(new AnyObject(4), new AnyObject(5));
-//        bucket.getAndSet(new AnyObject(6));
+        // 如果不存在设置
+        bucket.setIfAbsent(new Human("李四"));
+        System.out.println("如果不存在设置后的结果"+bucket.get());
+
+        // 比较并交换
+        bucket.compareAndSet(new Human("张三"), new Human("张三"));
+        System.out.println("比较并交换后的结果"+bucket.get());
 
         System.exit(0);
     }
@@ -36,13 +41,6 @@ public class ObjectHolderDemo {
 
         public Human(String name) {
             this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return "Human{" +
-                    "name='" + name + '\'' +
-                    '}';
         }
     }
 }

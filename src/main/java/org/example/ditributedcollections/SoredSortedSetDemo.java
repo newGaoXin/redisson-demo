@@ -3,6 +3,7 @@ package org.example.ditributedcollections;
 import org.example.utils.RedissonUtil;
 import org.redisson.Redisson;
 import org.redisson.api.RScoredSortedSet;
+import org.redisson.api.RSortedSet;
 
 /**
  * @author newgaoxin
@@ -14,7 +15,7 @@ public class SoredSortedSetDemo {
 
     public static void main(String[] args) {
         Redisson instance = RedissonUtil.INSTANCE;
-        RScoredSortedSet<String> set = instance.getScoredSortedSet("simple");
+        RScoredSortedSet<String> set = instance.getScoredSortedSet(SoredSortedSetDemo.class.getSimpleName());
 
         set.add(0.6, "张三");
         set.addAsync(0.251, "李四");

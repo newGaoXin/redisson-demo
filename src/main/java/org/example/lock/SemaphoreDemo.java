@@ -41,7 +41,7 @@ public class SemaphoreDemo {
                 // 获取信号量
                 semaphore.acquire();
                 System.out.println(Thread.currentThread().getName() + "获取信号量成功");
-                Thread.sleep(1000);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
